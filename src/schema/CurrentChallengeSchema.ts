@@ -46,6 +46,18 @@ export class SuccessResponseTicket {
   code?: string;
 }
 
+@ObjectType()
+export class SuccessResponseTicketSingle {
+  @Field(type => String)
+  msg?: string;
+
+  @Field(type => String)
+  token?: string;
+
+  @Field(type => String)
+  code?: string;
+}
+
 @Directive("@extends")
 @Directive(`@key(fields: "_id")`)
 @ObjectType()
@@ -60,30 +72,23 @@ export class Challenge {
 @ObjectType()
 export class User {
   @Directive("@external")
-  @Field()
-  _id: string;
+  @Field(type => ID)
+  _id: mongoose.Types.ObjectId;
 }
 
 @InputType()
 export class NewCurrentChallenge {
-  @Type(() => Challenge)
-  @Field()
-  Challenge: Challenge;
-
-  @Type(() => User)
-  @Field()
-  User: User;
+  @Field(type => ID)
+  Challenge: mongoose.Types.ObjectId;
 }
 
 @InputType()
 export class EditCurrentChallenge {
-  @Type(() => Challenge)
-  @Field()
-  Challenge: Challenge;
+  @Field(type => ID)
+  Challenge: mongoose.Types.ObjectId;
 
-  @Type(() => User)
-  @Field()
-  User: User;
+  @Field(type => ID)
+  User: mongoose.Types.ObjectId;
 }
 
 @InputType({ description: "Modify the existing current challenge" })
@@ -91,7 +96,6 @@ export class ModifyCurrentChallenge extends EditCurrentChallenge {
   @Field(type => ID)
   id: mongoose.Types.ObjectId;
 }
-
 
 @ObjectType()
 export class CurrentChallenge {

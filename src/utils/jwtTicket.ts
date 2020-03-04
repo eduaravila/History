@@ -26,7 +26,7 @@ class Token {
             nuevo = { ...nuevo, [i]: decrypt(object_data[i]) };
           }
         });
-        return Promise.resolve(nuevo);
+        return Promise.resolve({ ...object_data, ...nuevo });
       } catch (error) {
         Promise.reject(error);
       }

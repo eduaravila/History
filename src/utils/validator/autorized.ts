@@ -1,6 +1,5 @@
 import { AuthChecker } from "type-graphql";
 import jwtAdmin from "../jwtAdmin";
-import jwtMedia from "../jwtMedia";
 
 export const customAuthChecker: AuthChecker<any> = async (
   { root, args, context, info },
@@ -13,9 +12,6 @@ export const customAuthChecker: AuthChecker<any> = async (
     switch (roles[0]) {
       case "ADMIN":
         await jwtAdmin.validateToken(token);
-        break;
-      default:
-        await jwtMedia.validateToken(token);
         break;
     }
     return true; // or false if access is denied

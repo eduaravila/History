@@ -31,7 +31,7 @@ const History_schema: Schema = new mongoose.Schema({
     completed: { type: Number, required: true },
     trophys: { type: Number, required: true },
     experience: { type: Number, required: true },
-    grade: { type: Number, required: true },
+    grade: { type: String, required: true },
     photos: { type: Number, required: true },
     commentary: { type: Number, required: true }
   },

@@ -26,7 +26,7 @@ export interface HistoryModelType
     completed: number;
     trophys: number;
     experience: number;
-    grade: number;
+    grade: string;
     photos: number;
     commentary: number;
   };

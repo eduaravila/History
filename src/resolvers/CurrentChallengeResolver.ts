@@ -9,7 +9,6 @@ import {
 } from "type-graphql";
 
 import {
-  Challenge,
   NewHistory,
   SuccessResponse,
   findInput,
@@ -20,7 +19,9 @@ import {
   NewCurrentChallenge,
   ModifyCurrentChallenge,
   CurrentChallenge,
-  SuccessResponseTicket
+  SuccessResponseTicket,
+  Challenge,
+  SuccessResponseTicketSingle
 } from "../schema/CurrentChallengeSchema";
 import {
   addCurrentChallenge,
@@ -44,9 +45,10 @@ export class CurrentChallengeResolver {
     };
   }
 
-  @Mutation(returns => SuccessResponseTicket)
-  async CloseChallenge(@Arg("id", () => ID) id: number, @Ctx() ctx: any) {
-    return await getCloseTicket({ id }, ctx);
+  @Mutation(returns => SuccessResponseTicketSingle)
+  async CloseChallenge(@Ctx() ctx: any) {
+    
+    return await getCloseTicket(ctx);
   }
 
   @Authorized("ADMIN")
@@ -64,7 +66,7 @@ export class CurrentChallengeResolver {
   @Mutation(returns => SuccessResponse, {
     description: "Admin query 🔏"
   })
-  async ModifyChallenge(
+  async ModifyCurrentChallenge(
     @Arg("ModifyChallenge", { nullable: true })
     modifyChallengeInput: ModifyCurrentChallenge,
     @Ctx() ctx: any

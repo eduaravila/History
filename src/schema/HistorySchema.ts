@@ -15,7 +15,7 @@ import {
   SanitizerInterface,
   Sanitize
 } from "class-sanitizer";
-
+import { Challenge, User } from "./CurrentChallengeSchema";
 import challenge_model from "../models/history";
 
 @SanitizerConstraint()
@@ -32,24 +32,6 @@ export class SuccessResponse {
 
   @Field(type => String)
   code?: string;
-}
-
-@Directive("@extends")
-@Directive(`@key(fields: "_id")`)
-@ObjectType()
-export class Challenge {
-  @Directive("@external")
-  @Field(type => ID)
-  _id: mongoose.Types.ObjectId;
-}
-
-@Directive("@extends")
-@Directive(`@key(fields: "_id")`)
-@ObjectType()
-export class User {
-  @Directive("@external")
-  @Field()
-  _id: string;
 }
 
 @Directive("@extends")
@@ -81,13 +63,43 @@ export class Points {
   @Field(type => Int, { nullable: true })
   experience: number;
 
-  @Field(type => Int, { nullable: true })
-  grade: number;
+  @Field(type => String, { nullable: true })
+  grade: string;
 
   @Field(type => Int, { nullable: true })
   photos: number;
 
   @Field(type => Int, { nullable: true })
+  commentary: number;
+}
+
+@InputType()
+export class PointsInput {
+  @Field(type => Int)
+  total: number;
+
+  @Field(type => Int)
+  after24: number;
+
+  @Field(type => Int)
+  rarity: number;
+
+  @Field(type => Int)
+  completed: number;
+
+  @Field(type => Int)
+  trophys: number;
+
+  @Field(type => Int)
+  experience: number;
+
+  @Field(type => String)
+  grade: string;
+
+  @Field(type => Int)
+  photos: number;
+
+  @Field(type => Int)
   commentary: number;
 }
 
@@ -100,16 +112,16 @@ export class NewHistory {
   Challenge: string;
 
   @Field(type => ID)
-  User: mongoose.Types.ObjectId;
-
-  @Field(type => ID)
   Commentary: mongoose.Types.ObjectId;
 
-  @Field(type => Points)
-  Points: Points;
+  @Field(type => PointsInput)
+  Points: PointsInput;
 
   @Field(type => String, { nullable: true })
   start_date: string;
+
+  @Field(type => String, { nullable: true })
+  total_time: string;
 
   @Field(type => String, { nullable: true })
   end_date: string;

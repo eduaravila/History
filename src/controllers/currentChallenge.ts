@@ -13,7 +13,7 @@ import jwtTicket from "../utils/jwtTicket";
 import { decrypt, encrypt } from "../utils/crypt";
 
 export const addCurrentChallenge = async (
-  { Challenge, User }: NewCurrentChallenge,
+  { Challenge }: NewCurrentChallenge,
   ctx: any
 ) => {
   try {
@@ -28,7 +28,7 @@ export const addCurrentChallenge = async (
 
     let newCurrentChallenge = new currentChallengeModel({
       Challenge,
-      User,
+      User: tokenData.userId,
       created_by: tokenData.userId,
       updated_by: tokenData.userId
     });
@@ -76,9 +76,10 @@ export const getCurrentChallenges = async ({
   }
 };
 
-export const getCloseTicket = async ({ id }: any, ctx: any) => {
+export const getCloseTicket = async (ctx: any) => {
   try {
     let token = ctx.req.headers.token;
+    console.log(ctx.headers);
 
     let localToken = await Jwt.validateToken(
       token,
@@ -88,26 +89,34 @@ export const getCloseTicket = async ({ id }: any, ctx: any) => {
     let tokenData: any = await Jwt.decrypt_data(localToken)();
 
     //? the person requesting the ticket is the same that created the ticket
+    let ticketFromChallengeInfo = await currentChallengeModel.findOne({
+      $and: [{ User: tokenData.userId }, { created_by: tokenData.userId }]
+    });
+
     let ticketFromChallenge = await currentChallengeModel.delete(
-      { $and: [{ User: id }, { created_by: tokenData.userId }] },
+      { $and: [{ User: tokenData.userId }, { created_by: tokenData.userId }] },
       tokenData.userId
     );
+    console.log(ticketFromChallengeInfo);
 
     // * sets the reward for uploading files to the ecolote server
     let ticketToken = new jwtTicket({
-      Challenge: ticketFromChallenge.Challenge,
+      Challenge: ticketFromChallengeInfo.Challenge.toString(),
       userId: tokenData.userId,
-      created_at: ticketFromChallenge.created_at,
-      closed_at: ticketFromChallenge.deleteAt
+      created_at: ticketFromChallengeInfo.created_at,
+      closed_at: moment().format("YYYY-MM-DD/HH:mm:ZZ")
     });
     await ticketToken.create_token("1h");
+    console.log(ticketToken);
 
     return Promise.resolve({
-      msg: `${ticketFromChallenge._id} succesfully closed`,
+      msg: `${ticketFromChallengeInfo.Challenge} succesfully closed`,
       code: "200",
       token: ticketToken.token
     });
   } catch (error) {
+    console.log(error);
+
     new ApolloError(error);
   }
 };

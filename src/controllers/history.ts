@@ -8,7 +8,15 @@ import { NewHistory } from "../schema/HistorySchema";
 import { findInput } from "../schema/CurrentChallengeSchema";
 
 export const addHistory = async (
-  { Challenge, Commentary, User, media, Points }: NewHistory,
+  {
+    Challenge,
+    Commentary,
+    media,
+    Points,
+    end_date,
+    start_date,
+    total_time
+  }: NewHistory,
   ctx: any
 ) => {
   try {
@@ -21,27 +29,16 @@ export const addHistory = async (
 
     let tokenData: any = await Jwt.decrypt_data(localToken)();
 
-    // ? challenge information
-    let challengeToken = await jwtTicket.validateToken(Challenge);
-    let challengeTokenData: any = await jwtTicket.decrypt_data(
-      challengeToken
-    )();
-
-    var duration = moment.duration(
-      challengeTokenData.closed_at.diff(challengeTokenData.created_at)
-    );
-    var total_time = duration.asHours();
-
     let newCurrentChallenge = new historyModel({
-      Challenge: challengeTokenData.Challenge,
-      User,
+      Challenge: Challenge,
+      User: tokenData.userId,
       Commentary,
       Points,
       media,
       created_by: tokenData.userId,
       updated_by: tokenData.userId,
-      start_date: challengeTokenData.created_at,
-      end_date: challengeTokenData.closed_at,
+      start_date,
+      end_date,
       total_time
     });
 

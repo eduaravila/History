@@ -1,7 +1,6 @@
 import { Resolver, Mutation, Arg, Ctx, Query, ID } from "type-graphql";
 
 import {
-  Challenge,
   NewHistory,
   SuccessResponse,
   findInput,

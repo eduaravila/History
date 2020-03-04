@@ -4,8 +4,7 @@ import { ApolloServer } from "apollo-server-express";
 import express_user_ip from "express-ip";
 
 import { buildFederatedSchema } from "./helpers/buildFederatedSchema";
-import { User, Challenge, History } from "./schema/HistorySchema";
-import { CurrentChallenge } from "./schema/CurrentChallengeSchema";
+import { User, Challenge } from "./schema/CurrentChallengeSchema";
 import { customAuthChecker } from "./utils/validator/autorized";
 
 //?  decorators metadata
