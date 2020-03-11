@@ -27,7 +27,8 @@ import {
   addCurrentChallenge,
   getCurrentChallenges,
   getCloseTicket,
-  modifyCurrentChallenge
+  modifyCurrentChallenge,
+  myCurrentChallenge
 } from "../controllers/currentChallenge";
 
 @Resolver(of => CurrentChallenge)
@@ -47,7 +48,6 @@ export class CurrentChallengeResolver {
 
   @Mutation(returns => SuccessResponseTicketSingle)
   async CloseChallenge(@Ctx() ctx: any) {
-    
     return await getCloseTicket(ctx);
   }
 
@@ -76,5 +76,11 @@ export class CurrentChallengeResolver {
       msg,
       code: "200"
     };
+  }
+
+  // ? gets the current challenge if exists
+  @Query(returns => CurrentChallenge)
+  async MyCurrentChallenge(@Ctx() ctx: any) {
+    return await myCurrentChallenge(ctx);
   }
 }

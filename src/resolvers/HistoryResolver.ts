@@ -8,7 +8,11 @@ import {
   History
 } from "../schema/HistorySchema";
 
-import { addHistory, getHistory } from "../controllers/history";
+import {
+  addHistory,
+  getHistory,
+  getCompletedChallenges
+} from "../controllers/history";
 
 @Resolver(of => History)
 export class HistoryResolver {
@@ -27,6 +31,12 @@ export class HistoryResolver {
   @Query(returns => [History])
   async history(@Arg("findInput", () => findInput) findInput: findInput) {
     let msg = await getHistory(findInput);
+    return [...msg];
+  }
+
+  @Query(returns => [History])
+  async MyCompletedChallenges(@Ctx() ctx: any) {
+    let msg = await getCompletedChallenges(ctx);
     return [...msg];
   }
 }

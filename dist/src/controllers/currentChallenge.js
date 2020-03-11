@@ -106,4 +106,21 @@ exports.modifyCurrentChallenge = ({ Challenge, User, id }, ctx) => __awaiter(thi
         throw new apollo_server_express_1.ApolloError(error);
     }
 });
+// ? gets the current challenge if exists
+exports.myCurrentChallenge = (ctx) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        let token = ctx.req.headers.token;
+        let localToken = yield jwt_1.default.validateToken(token, ctx.req.body.variables.publicKey);
+        let tokenData = yield jwt_1.default.decrypt_data(localToken)();
+        //? the person requesting the ticket is the same that created the ticket
+        let ticketFromChallengeInfo = yield currentChallenge_1.default.findOne({
+            $and: [{ User: tokenData.userId }, { created_by: tokenData.userId }]
+        });
+        return Promise.resolve(ticketFromChallengeInfo);
+    }
+    catch (error) {
+        console.log(error);
+        new apollo_server_express_1.ApolloError(error);
+    }
+});
 //# sourceMappingURL=currentChallenge.js.map

@@ -143,3 +143,28 @@ export const modifyCurrentChallenge = async (
     throw new ApolloError(error);
   }
 };
+
+// ? gets the current challenge if exists
+export const myCurrentChallenge = async (ctx: any) => {
+  try {
+    let token = ctx.req.headers.token;
+
+    let localToken = await Jwt.validateToken(
+      token,
+      ctx.req.body.variables.publicKey
+    );
+
+    let tokenData: any = await Jwt.decrypt_data(localToken)();
+
+    //? the person requesting the ticket is the same that created the ticket
+    let ticketFromChallengeInfo = await currentChallengeModel.findOne({
+      $and: [{ User: tokenData.userId }, { created_by: tokenData.userId }]
+    });
+
+    return Promise.resolve(ticketFromChallengeInfo);
+  } catch (error) {
+    console.log(error);
+
+    new ApolloError(error);
+  }
+};

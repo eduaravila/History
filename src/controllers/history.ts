@@ -80,3 +80,27 @@ export const getHistory = async ({ page = 0, size = 0, search }: findInput) => {
     new ApolloError(error);
   }
 };
+
+export const getCompletedChallenges = async (ctx: any) => {
+  try {
+    let token = ctx.req.headers.token;
+
+    let localToken = await Jwt.validateToken(
+      token,
+      ctx.req.body.variables.publicKey
+    );
+
+    let tokenData: any = await Jwt.decrypt_data(localToken)();
+
+    let result = await historyModel
+      .find({
+        User: tokenData.userId
+      })
+      .lean();
+
+
+    return Promise.resolve(result);
+  } catch (error) {
+    new ApolloError(error);
+  }
+};

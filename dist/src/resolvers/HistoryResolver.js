@@ -39,6 +39,12 @@ let HistoryResolver = class HistoryResolver {
             return [...msg];
         });
     }
+    MyCompletedChallenges(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let msg = yield history_1.getCompletedChallenges(ctx);
+            return [...msg];
+        });
+    }
 };
 __decorate([
     type_graphql_1.Mutation(returns => HistorySchema_1.SuccessResponse),
@@ -55,6 +61,13 @@ __decorate([
     __metadata("design:paramtypes", [HistorySchema_1.findInput]),
     __metadata("design:returntype", Promise)
 ], HistoryResolver.prototype, "history", null);
+__decorate([
+    type_graphql_1.Query(returns => [HistorySchema_1.History]),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], HistoryResolver.prototype, "MyCompletedChallenges", null);
 HistoryResolver = __decorate([
     type_graphql_1.Resolver(of => HistorySchema_1.History)
 ], HistoryResolver);

@@ -65,4 +65,20 @@ exports.getHistory = ({ page = 0, size = 0, search }) => __awaiter(this, void 0,
         new apollo_server_express_1.ApolloError(error);
     }
 });
+exports.getCompletedChallenges = (ctx) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        let token = ctx.req.headers.token;
+        let localToken = yield jwt_1.default.validateToken(token, ctx.req.body.variables.publicKey);
+        let tokenData = yield jwt_1.default.decrypt_data(localToken)();
+        let result = yield history_1.default
+            .find({
+            User: tokenData.userId
+        })
+            .lean();
+        return Promise.resolve(result);
+    }
+    catch (error) {
+        new apollo_server_express_1.ApolloError(error);
+    }
+});
 //# sourceMappingURL=history.js.map

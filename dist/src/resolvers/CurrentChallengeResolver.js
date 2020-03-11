@@ -54,6 +54,12 @@ let CurrentChallengeResolver = class CurrentChallengeResolver {
             };
         });
     }
+    // ? gets the current challenge if exists
+    MyCurrentChallenge(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield currentChallenge_1.myCurrentChallenge(ctx);
+        });
+    }
 };
 __decorate([
     type_graphql_1.Mutation(returns => HistorySchema_1.SuccessResponse),
@@ -91,6 +97,13 @@ __decorate([
     __metadata("design:paramtypes", [CurrentChallengeSchema_1.ModifyCurrentChallenge, Object]),
     __metadata("design:returntype", Promise)
 ], CurrentChallengeResolver.prototype, "ModifyCurrentChallenge", null);
+__decorate([
+    type_graphql_1.Query(returns => CurrentChallengeSchema_1.CurrentChallenge),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CurrentChallengeResolver.prototype, "MyCurrentChallenge", null);
 CurrentChallengeResolver = __decorate([
     type_graphql_1.Resolver(of => CurrentChallengeSchema_1.CurrentChallenge)
 ], CurrentChallengeResolver);
