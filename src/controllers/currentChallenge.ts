@@ -63,10 +63,7 @@ export const getCurrentChallenges = async ({
       search.length > 0
         ? await currentChallengeModel
             .find({
-              $or: [
-                { User: { $regex: ".*" + search + ".*" } },
-                { _id: { $regex: ".*" + search + ".*" } }
-              ]
+              _id: { $regex: ".*" + search + ".*" }
             })
             .skip(offset)
             .limit(limit)
