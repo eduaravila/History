@@ -1,6 +1,6 @@
 import moment from "moment";
 import { ApolloError } from "apollo-server-express";
-
+import mongoose from "mongoose";
 import historyModel from "../models/history";
 import Jwt from "../utils/jwt";
 import jwtTicket from "../utils/jwtTicket";
@@ -30,7 +30,7 @@ export const addHistory = async (
     let tokenData: any = await Jwt.decrypt_data(localToken)();
 
     let newCurrentChallenge = await historyModel.findOneAndUpdate(
-      { Challenge: Challenge },
+      { Challenge: { _id: mongoose.Types.ObjectId(Challenge) } },
       {
         Challenge: Challenge,
         User: tokenData.userId,
@@ -58,7 +58,11 @@ export const addHistory = async (
   }
 };
 
-export const getHistory = async ({ page = 0, size = 0, search }: findInput) => {
+export const getHistory = async ({
+  page = 0,
+  size = 0,
+  search = ""
+}: findInput) => {
   try {
     let offset = page * size;
     let limit = offset + size;
@@ -67,10 +71,7 @@ export const getHistory = async ({ page = 0, size = 0, search }: findInput) => {
       search.length > 0
         ? await historyModel
             .find({
-              $or: [
-                { User: { $regex: ".*" + search + ".*" } },
-                { _id: { $regex: ".*" + search + ".*" } }
-              ]
+              _id: { $regex: ".*" + search + ".*" }
             })
             .skip(offset)
             .limit(limit)
@@ -116,7 +117,7 @@ export const getCompletedChallenges = async (props: findInput, ctx: any) => {
           User: tokenData.userId
         })
         .lean();
-        
+
       return Promise.resolve(result);
     }
   } catch (error) {
