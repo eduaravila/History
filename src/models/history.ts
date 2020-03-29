@@ -8,8 +8,7 @@ const History_schema: Schema = new mongoose.Schema({
   media: [
     {
       type: String,
-      required: true,
-      unique: true
+      required: false,
     }
   ],
   Challenge: {
@@ -22,7 +21,7 @@ const History_schema: Schema = new mongoose.Schema({
   },
   Commentary: {
     type: mongoose.Types.ObjectId,
-    required: true
+    required: false
   },
   Points: {
     total: { type: Number, required: true },

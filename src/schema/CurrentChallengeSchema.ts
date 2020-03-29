@@ -103,11 +103,11 @@ export class CurrentChallenge {
   _id: string;
 
   @Type(() => Challenge)
-  @Field()
+  @Field({ nullable: false })
   Challenge: Challenge;
 
   @Type(() => User)
-  @Field()
+  @Field({ nullable: false })
   User: User;
 
   @Field(type => String, { nullable: true })

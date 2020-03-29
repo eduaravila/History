@@ -26,16 +26,23 @@ export const addCurrentChallenge = async (
 
     let tokenData: any = await Jwt.decrypt_data(localToken)();
 
-    let newCurrentChallenge = new currentChallengeModel({
-      Challenge,
-      User: tokenData.userId,
-      created_by: tokenData.userId,
-      updated_by: tokenData.userId
-    });
+    let newCurrentChallenge = await currentChallengeModel.findOneAndUpdate(
+      { User: tokenData.userId },
+      {
+        Challenge,
+        User: tokenData.userId,
+        created_by: tokenData.userId,
+        updated_by: tokenData.userId,
+        created_at: moment().format("YYYY-MM-DD/HH:mm:ZZ")
+      },
+      {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true
+      }
+    );
 
-    await newCurrentChallenge.save();
-
-    return Promise.resolve(`${newCurrentChallenge._id} succesfully created`);
+    return Promise.resolve(`${tokenData.userId} succesfully created`);
   } catch (error) {
     console.log(error);
 
@@ -76,7 +83,7 @@ export const getCurrentChallenges = async ({
   }
 };
 
-export const getCloseTicket = async (ctx: any) => {
+export const getCloseTicket = async (lastChallenge: string, ctx: any) => {
   try {
     let token = ctx.req.headers.token;
     console.log(ctx.headers);
@@ -89,14 +96,23 @@ export const getCloseTicket = async (ctx: any) => {
     let tokenData: any = await Jwt.decrypt_data(localToken)();
 
     //? the person requesting the ticket is the same that created the ticket
-    let ticketFromChallengeInfo = await currentChallengeModel.findOne({
-      $and: [{ User: tokenData.userId }, { created_by: tokenData.userId }]
-    });
+    let ticketFromChallengeInfo = lastChallenge
+      ? await currentChallengeModel.findOneWithDeleted({
+          $and: [
+            { User: tokenData.userId },
+            { created_by: tokenData.userId },
+            { Challenge: lastChallenge }
+          ]
+        })
+      : await currentChallengeModel.findOne({
+          $and: [{ User: tokenData.userId }, { created_by: tokenData.userId }]
+        });
 
     let ticketFromChallenge = await currentChallengeModel.delete(
       { $and: [{ User: tokenData.userId }, { created_by: tokenData.userId }] },
       tokenData.userId
     );
+
     console.log(ticketFromChallengeInfo);
 
     // * sets the reward for uploading files to the ecolote server

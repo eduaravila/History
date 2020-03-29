@@ -106,12 +106,12 @@ export class PointsInput {
 @InputType()
 export class NewHistory {
   @Field(type => [String], { nullable: true })
-  media: [string];
+  media?: [string];
 
   @Field(type => String)
   Challenge: string;
 
-  @Field(type => ID)
+  @Field(type => ID, { nullable: true })
   Commentary: mongoose.Types.ObjectId;
 
   @Field(type => PointsInput)
@@ -174,7 +174,7 @@ export class History {
   User: User;
 
   @Type(() => Commentary)
-  @Field()
+  @Field({ nullable: true })
   Commentary: Commentary;
 
   @Field(type => Points, { nullable: true })

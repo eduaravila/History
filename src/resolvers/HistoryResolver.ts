@@ -35,8 +35,11 @@ export class HistoryResolver {
   }
 
   @Query(returns => [History])
-  async MyCompletedChallenges(@Ctx() ctx: any) {
-    let msg = await getCompletedChallenges(ctx);
+  async MyCompletedChallenges(
+    @Arg("findInput", () => findInput, { nullable: true }) findInput: findInput,
+    @Ctx() ctx: any
+  ) {
+    let msg = await getCompletedChallenges(findInput, ctx);
     return [...msg];
   }
 }

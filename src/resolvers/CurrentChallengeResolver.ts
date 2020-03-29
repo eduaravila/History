@@ -47,8 +47,12 @@ export class CurrentChallengeResolver {
   }
 
   @Mutation(returns => SuccessResponseTicketSingle)
-  async CloseChallenge(@Ctx() ctx: any) {
-    return await getCloseTicket(ctx);
+  async CloseChallenge(
+    @Arg("lastChallenge", { nullable: true })
+    lastChallenge: string,
+    @Ctx() ctx: string
+  ) {
+    return await getCloseTicket(lastChallenge, ctx);
   }
 
   @Authorized("ADMIN")
@@ -79,7 +83,7 @@ export class CurrentChallengeResolver {
   }
 
   // ? gets the current challenge if exists
-  @Query(returns => CurrentChallenge)
+  @Query(returns => CurrentChallenge, { nullable: true })
   async MyCurrentChallenge(@Ctx() ctx: any) {
     return await myCurrentChallenge(ctx);
   }

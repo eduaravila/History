@@ -29,20 +29,26 @@ export const addHistory = async (
 
     let tokenData: any = await Jwt.decrypt_data(localToken)();
 
-    let newCurrentChallenge = new historyModel({
-      Challenge: Challenge,
-      User: tokenData.userId,
-      Commentary,
-      Points,
-      media,
-      created_by: tokenData.userId,
-      updated_by: tokenData.userId,
-      start_date,
-      end_date,
-      total_time
-    });
-
-    await newCurrentChallenge.save();
+    let newCurrentChallenge = await historyModel.findOneAndUpdate(
+      { Challenge: Challenge },
+      {
+        Challenge: Challenge,
+        User: tokenData.userId,
+        Commentary: Commentary ? Commentary : null,
+        Points,
+        media: media ? media : null,
+        created_by: tokenData.userId,
+        updated_by: tokenData.userId,
+        start_date,
+        end_date,
+        total_time
+      },
+      {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true
+      }
+    );
 
     return Promise.resolve(`${newCurrentChallenge._id} succesfully created`);
   } catch (error) {
@@ -81,7 +87,7 @@ export const getHistory = async ({ page = 0, size = 0, search }: findInput) => {
   }
 };
 
-export const getCompletedChallenges = async (ctx: any) => {
+export const getCompletedChallenges = async (props: findInput, ctx: any) => {
   try {
     let token = ctx.req.headers.token;
 
@@ -92,14 +98,27 @@ export const getCompletedChallenges = async (ctx: any) => {
 
     let tokenData: any = await Jwt.decrypt_data(localToken)();
 
-    let result = await historyModel
-      .find({
-        User: tokenData.userId
-      })
-      .lean();
-
-
-    return Promise.resolve(result);
+    if (props) {
+      let { page = 0, size = 1, search } = props;
+      let offset = page * size;
+      let limit = offset + size;
+      let result = await historyModel
+        .find({
+          User: tokenData.userId
+        })
+        .skip(offset)
+        .limit(limit)
+        .lean();
+      return Promise.resolve(result);
+    } else {
+      let result = await historyModel
+        .find({
+          User: tokenData.userId
+        })
+        .lean();
+        
+      return Promise.resolve(result);
+    }
   } catch (error) {
     new ApolloError(error);
   }
